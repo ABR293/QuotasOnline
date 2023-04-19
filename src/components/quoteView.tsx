@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
+import AnimatedLabel from "./AnimatedLabel";
 
 interface IQuote {
   label: string;
@@ -8,34 +9,45 @@ interface IQuote {
 }
 
 class QuoteView extends React.Component<IQuote> {
+  condition = false;
+  componentDidUpdate(): void {
+    this.condition = false;
+    setTimeout(() => (this.condition = true), 100);
+  }
   render() {
-    const { header, data } = this.props;
+    const { header, data, label } = this.props;
     const { last, highestBid, percentChange } = data;
     return (
       <Container isHeader={header}>
         <TextContainer>
-          <MainText isHeader={header}>{this.props.label}</MainText>
+          {header ? <Header>{label}</Header> : <AnimatedLabel text={label} />}
         </TextContainer>
         <TextContainer>
-          <MainText isHeader={header}>{last}</MainText>
+          {header ? <Header>{last}</Header> : <AnimatedLabel text={last} />}
         </TextContainer>
         <TextContainer>
-          <MainText isHeader={header}>{highestBid}</MainText>
+          {header ? (
+            <Header>{highestBid}</Header>
+          ) : (
+            <AnimatedLabel text={highestBid} />
+          )}
         </TextContainer>
         <TextContainer>
-          <MainText
-            isHeader={header}
-            color={
-              !header &&
-              (percentChange > 0
-                ? "green"
-                : percentChange == 0
-                ? "black"
-                : "red")
-            }
-          >
-            {!header ? +percentChange + "%" : percentChange}
-          </MainText>
+          {header ? (
+            <Header>{percentChange}</Header>
+          ) : (
+            <AnimatedLabel
+              text={`${+percentChange} %`}
+              color={
+                !header &&
+                (percentChange > 0
+                  ? "green"
+                  : percentChange == 0
+                  ? "black"
+                  : "red")
+              }
+            />
+          )}
         </TextContainer>
       </Container>
     );
@@ -59,10 +71,9 @@ const TextContainer = styled.View`
   padding-right: 3;
 `;
 
-const MainText = styled.Text`
-  font-weight: ${({ isHeader = false }) => (isHeader ? "bold" : "normal")};
-  font-size: 12;
-  color: ${({ color }) => color};
+const Header = styled.Text`
+  font-weight: bold;
+  font-size: 15;
 `;
 
 export default QuoteView;
