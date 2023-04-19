@@ -1,7 +1,5 @@
-import { Text, View } from "react-native";
 import React from "react";
-import { StyleSheet, Animated } from "react-native";
-import { screensEnabled } from "react-native-screens";
+import styled from "styled-components/native";
 
 interface IQuote {
   label: string;
@@ -14,57 +12,57 @@ class QuoteView extends React.Component<IQuote> {
     const { header, data } = this.props;
     const { last, highestBid, percentChange } = data;
     return (
-      <View style={{ ...styles.container, height: header ? 40 : 25 }}>
-        <View style={styles.textContainer}>
-          <Text style={{ fontWeight: header ? "bold" : "normal" }}>
-            {this.props.label}
-          </Text>
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={{ fontWeight: header ? "bold" : "normal" }}>{last}</Text>
-        </View>
-        <Animated.View style={styles.textContainer}>
-          <Text style={{ fontWeight: header ? "bold" : "normal" }}>
-            {highestBid}
-          </Text>
-        </Animated.View>
-        <View style={styles.textContainer}>
-          <Text
-            style={{
-              fontWeight: header ? "bold" : "normal",
-              color:
-                !header &&
-                (percentChange > 0
-                  ? "green"
-                  : percentChange == 0
-                  ? "black"
-                  : "red"),
-            }}
+      <Container isHeader={header}>
+        <TextContainer>
+          <MainText isHeader={header}>{this.props.label}</MainText>
+        </TextContainer>
+        <TextContainer>
+          <MainText isHeader={header}>{last}</MainText>
+        </TextContainer>
+        <TextContainer>
+          <MainText isHeader={header}>{highestBid}</MainText>
+        </TextContainer>
+        <TextContainer>
+          <MainText
+            isHeader={header}
+            color={
+              !header &&
+              (percentChange > 0
+                ? "green"
+                : percentChange == 0
+                ? "black"
+                : "red")
+            }
           >
             {!header ? +percentChange + "%" : percentChange}
-          </Text>
-        </View>
-      </View>
+          </MainText>
+        </TextContainer>
+      </Container>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    borderBottomColor: "lightgray",
-    borderBottomWidth: 1,
-    width: "100%",
-    height: 25,
-  },
-  textContainer: {
-    width: "25%",
-    paddingLeft: 3,
-    paddingRight: 3,
-  },
-});
+const Container = styled.View`
+  backgroundcolor: #fff;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  border-bottom-color: lightgray;
+  border-bottom-width: 1;
+  width: 100%;
+  height: ${({ isHeader = false }) => (isHeader ? "50" : "25")};
+`;
+
+const TextContainer = styled.View`
+  width: 24%;
+  padding-left: 3;
+  padding-right: 3;
+`;
+
+const MainText = styled.Text`
+  font-weight: ${({ isHeader = false }) => (isHeader ? "bold" : "normal")};
+  font-size: 12;
+  color: ${({ color }) => color};
+`;
 
 export default QuoteView;

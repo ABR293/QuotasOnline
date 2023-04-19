@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import QuoteView from "../components/quoteView";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import styled from "styled-components/native";
 
 interface DescriptionPropsType {
   navigation: any;
@@ -25,7 +26,7 @@ class DataPage extends React.Component<DescriptionPropsType> {
 
   render() {
     return (
-      <SafeAreaView style={styles.dataContainer}>
+      <Container>
         <QuoteView
           label={"Quote"}
           data={{
@@ -35,28 +36,20 @@ class DataPage extends React.Component<DescriptionPropsType> {
           }}
           header={true}
         />
-        <View
-          style={{
-            ...styles.infoLabel,
-            backgroundColor: quotes.error ? "red" : "#95b2c2",
-          }}
-        >
-          <Text>
+        <InfoLabel isError={!!quotes.error}>
+          <InfoText isError={!!quotes.error}>
             {quotes.error
               ? "Произошла ошибка! Попробуйте позже!"
               : quotes.loading
               ? "loading"
               : "LastUpdate: " + quotes.lastUpdate}
-          </Text>
-        </View>
+          </InfoText>
+        </InfoLabel>
         <View></View>
         {quotes.loading || quotes.error ? (
-          <View style={styles.loader}>
-            <ActivityIndicator size="large" />
-          </View>
+          <Loader size="large"></Loader>
         ) : (
-          <FlatList
-            style={styles.test}
+          <List
             data={Object.keys(quotes.data)}
             renderItem={({ item }) => (
               <QuoteView label={item} data={quotes.data[item]} />
@@ -69,38 +62,59 @@ class DataPage extends React.Component<DescriptionPropsType> {
           title="Go Home"
           onPress={() => this.props.navigation.navigate("Main")}
         />
-      </SafeAreaView>
+      </Container>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  dataContainer: {
-    width: "96%",
-    marginLeft: 10,
-  },
-  infoLabel: {
-    width: "100%",
-    height: 25,
-    flexDirection: "row",
-    textAlign: "center",
-    justifyContent: "center",
-    paddingTop: 5,
-  },
-  loader: {
-    margin: 40,
-    width: 100,
-    height: 100,
-  },
+const Container = styled.View`
+  flex: 1;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+  height: 95%;
+  width: 95%;
+  margin: auto;
+  margin-bottom: 15%;
+`;
 
-  test: {
-    height: 500,
-  },
-});
+{
+  /* <View
+style={{
+  ...styles.infoLabel,
+  backgroundColor: quotes.error ? "red" : "#95b2c2",
+}} */
+}
+
+const InfoLabel = styled.View`
+  width: 100%;
+  height: 25;
+  text-align: center;
+  justify-content: center;
+  flex-direction: row;
+  padding-top: 5;
+  background-color: ${({ isError = false }) => (isError ? "red" : "#95b2c2")};
+`;
+
+const InfoText = styled.Text`
+  color: ${({ isError = false }) => (isError ? "white" : "black")};
+`;
+
+const Loader = styled.ActivityIndicator`
+  width: 100%;
+  height: 85%;
+`;
+
+const List = styled.FlatList`
+  height: 100%;
+`;
+
+// const Container = styled.View`
+//   flex: 1;
+//   align-items: "flex-start";
+//   justify-content: "flex-start";
+// `;
+
+// const dataContainer = styled.
 
 export default observer(DataPage);
